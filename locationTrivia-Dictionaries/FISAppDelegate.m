@@ -13,10 +13,12 @@
 - (NSString *)stringByTruncatingNameOfLocation:(NSDictionary *)location
                                       toLength:(NSUInteger)length {
     NSRange range = NSMakeRange(0, length);
-    if (range.length > 0 || range.length > [location count]) {
+    NSUInteger locationCount = [location[@"name"] length];
+    if (length >= locationCount) {
+        return location[@"name"];
+    } else {
         return [location[@"name"] substringWithRange:range];
     }
-    return location[@"name"];
 }
 
 - (NSDictionary *)dictionaryForLocationWithName:(NSString *)name
@@ -42,17 +44,21 @@
 
 - (BOOL)dictionaryIsValidLocation:NSDictionary {
     NSArray *keys = [NSDictionary allKeys];
-    NSUInteger keyCount = [keys count];
     NSArray *propertyArray = @[@"name", @"latitude", @"longitude"];
-    if ((keyCount == [propertyArray count] && [keys containsObject:propertyArray])) {
-        return TRUE;
+    if ([[NSSet setWithArray:keys] isEqualToSet:[NSSet setWithArray:propertyArray]]) {
+        return NSDictionary;
+    } else {
+        return NO;
     }
-    return FALSE;
 }
 - (NSDictionary *)locationNamed:(NSString *)name
                     inLocations:(NSArray *)locations {
-    return locations[0];
+    for (NSDictionary *location in locations) {
+        if (name == location[@"name"]) {
+            return location;
+        }
+    }
+    return nil; 
 }
-
 
 @end
